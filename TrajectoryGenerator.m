@@ -1,3 +1,4 @@
+% code for TrajectoryGenerator function
 function traj = TrajectoryGenerator(Tse_initial, Tsc_initial, Tsc_final, Tce_grasp, Tce_standoff, k)
 
     t = 1;

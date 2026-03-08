@@ -1,3 +1,4 @@
+%code used to test TrajectoryGenerator.m
 clear; clc;
 
 Tse_initial = [0 0 1 0;
