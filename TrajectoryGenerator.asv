@@ -1,116 +1,90 @@
 function traj = TrajectoryGenerator(Tse_initial, Tsc_initial, Tsc_final, Tce_grasp, Tce_standoff, k)
 
-%% Lab 3 (Inverse Kinematics) template
-% MAE204
-% Harry
-%
-% Computes inverse kinematics for each waypoints in the sequence, then
-% outputs the joint angle sets as well as gripper state as waypoint_array.csv file
-% waypoint_array.csv will be saved in Matlab's current directory
+    t = 1;
+    k = 1;
+    N = t*k/(0.01);
 
-Tse_standoff_initial = Tsc_initial.*Tce_standoff;
+    %initializing each trajectory matrix to zero
+    traj1_matrix = zeros(N,13);
+    traj2_matrix = zeros(N,13);
+    traj3_matrix = zeros(N,13);
+    traj4_matrix = zeros(N,13);
+    traj5_matrix = zeros(N,13);
+    traj6_matrix = zeros(N,13);
+    traj7_matrix = zeros(N,13);
+    traj8_matrix = zeros(N,13);
 
-t = 1;
-k = 1;
-N = t*k/(0.01);
-traj1 = CartesianTrajectory(Tse_initial, Tse_standoff_initial, t, N, 5);
+    % using ScrewTrajectory Function to write each trajectory
+    
+    %traj1
+    Tse_standoff_initial = Tsc_initial*Tce_standoff;
+    traj1 = ScrewTrajectory(Tse_initial, Tse_standoff_initial, t, N, 5);
 
-traj1_matrix = zeros(N,13);
-gripper_state = 0;
-for i = 1:N
-    traj1_matrix(i,:) = [traj1{i}(1,1),traj1{i}(1,2), traj1{i}(1,3), traj1{i}(2,1), traj1{i}(2,2), traj1{i}(2,3), traj1{i}(3,1), traj1{i}(3,2), traj1{i}(3,3), traj1{i}(1,4), traj1{i}(2,4), traj1{i}(3,4), gripper_state];
-end
+    gripper_state = 0;
+    for i = 1:N
+        traj1_matrix(i,:) = [traj1{i}(1,1),traj1{i}(1,2), traj1{i}(1,3), traj1{i}(2,1), traj1{i}(2,2), traj1{i}(2,3), traj1{i}(3,1), traj1{i}(3,2), traj1{i}(3,3), traj1{i}(1,4), traj1{i}(2,4), traj1{i}(3,4), gripper_state];
+    end
 
-Tse_grasp = Tsc_initial.* Tce_grasp;
-traj2 = CartesianTrajectory(Tse_standoff_initial, Tse_grasp, t, N, 5);
-traj2_matrix = zeros(N,13);
+    %traj2
+    Tse_grasp = Tsc_initial* Tce_grasp;
+    traj2 = ScrewTrajectory(Tse_standoff_initial, Tse_grasp, t, N, 5);
 
-for i = 1:N
-    traj2_matrix(i,:) = [traj2{i}(1,1),traj2{i}(1,2), traj2{i}(1,3), traj2{i}(2,1), traj2{i}(2,2), traj2{i}(2,3), traj2{i}(3,1), traj2{i}(3,2), traj2{i}(3,3), traj2{i}(1,4), traj2{i}(2,4), traj2{i}(3,4), gripper_state];
-end
+    for i = 1:N
+        traj2_matrix(i,:) = [traj2{i}(1,1),traj2{i}(1,2), traj2{i}(1,3), traj2{i}(2,1), traj2{i}(2,2), traj2{i}(2,3), traj2{i}(3,1), traj2{i}(3,2), traj2{i}(3,3), traj2{i}(1,4), traj2{i}(2,4), traj2{i}(3,4), gripper_state];
+    end
 
-gripper_state = 1;
-traj3 = CartesianTrajectory(Tse_grasp, Tse_grasp, t, N, 5);
+    %traj3
+    gripper_state = 1;
+    traj3 = ScrewTrajectory(Tse_grasp, Tse_grasp, t, N, 5);
 
-traj3_matrix = zeros(N,13);
 
-for i = 1:N
-    traj3_matrix(i,:) = [traj3{i}(1,1),traj3{i}(1,2), traj3{i}(1,3), traj3{i}(2,1), traj3{i}(2,2), traj3{i}(2,3), traj3{i}(3,1), traj3{i}(3,2), traj3{i}(3,3), traj3{i}(1,4), traj3{i}(2,4), traj3{i}(3,4), gripper_state];
-end
+    for i = 1:N
+        traj3_matrix(i,:) = [traj3{i}(1,1),traj3{i}(1,2), traj3{i}(1,3), traj3{i}(2,1), traj3{i}(2,2), traj3{i}(2,3), traj3{i}(3,1), traj3{i}(3,2), traj3{i}(3,3), traj3{i}(1,4), traj3{i}(2,4), traj3{i}(3,4), gripper_state];
+    end
 
-traj4 = ScrewTrajectory(Tse_grasp, Tse_standoff_initial, t, N, 5);
+    traj4 = ScrewTrajectory(Tse_grasp, Tse_standoff_initial, t, N, 5);
 
-traj4_matrix = zeros(N,13);
+    
 
-for i = 1:N
-    traj4_matrix(i,:) = [traj4{i}(1,1),traj4{i}(1,2), traj4{i}(1,3), traj4{i}(2,1), traj4{i}(2,2), traj4{i}(2,3), traj4{i}(3,1), traj4{i}(3,2), traj4{i}(3,3), traj4{i}(1,4), traj4{i}(2,4), traj4{i}(3,4), gripper_state];
-end
+    for i = 1:N
+        traj4_matrix(i,:) = [traj4{i}(1,1),traj4{i}(1,2), traj4{i}(1,3), traj4{i}(2,1), traj4{i}(2,2), traj4{i}(2,3), traj4{i}(3,1), traj4{i}(3,2), traj4{i}(3,3), traj4{i}(1,4), traj4{i}(2,4), traj4{i}(3,4), gripper_state];
+    end
 
-Tse_standoff_final = Tsc_final.*Tce_standoff;
-traj5 = ScrewTrajectory(Tse_standoff_initial, Tse_standoff_final, t, N, 5);
+    Tse_standoff_final = Tsc_final*Tce_standoff;
+    traj5 = ScrewTrajectory(Tse_standoff_initial, Tse_standoff_final, t, N, 5);
 
-traj5_matrix = zeros(N,13);
+    
+    
+    for i = 1:N
+        traj5_matrix(i,:) = [traj5{i}(1,1),traj5{i}(1,2), traj5{i}(1,3), traj5{i}(2,1), traj5{i}(2,2), traj5{i}(2,3), traj5{i}(3,1), traj5{i}(3,2), traj5{i}(3,3), traj5{i}(1,4), traj5{i}(2,4), traj5{i}(3,4), gripper_state];
+    end
 
-for i = 1:N
-    traj5_matrix(i,:) = [traj5{i}(1,1),traj5{i}(1,2), traj5{i}(1,3), traj5{i}(2,1), traj5{i}(2,2), traj5{i}(2,3), traj5{i}(3,1), traj5{i}(3,2), traj5{i}(3,3), traj5{i}(1,4), traj5{i}(2,4), traj5{i}(3,4), gripper_state];
-end
+    Tse_final = Tsc_final*Tce_grasp;
+    traj6 = ScrewTrajectory(Tse_standoff_final, Tse_final, t, N, 5);
 
-Tse_final = Tsc_final*Tce_grasp;
-traj6 = ScrewTrajectory(Tse_standoff_final, Tse_final, t, N, 5);
+    
 
-traj6_matrix = zeros(N,13);
+    for i = 1:N
+        traj6_matrix(i,:) = [traj6{i}(1,1),traj6{i}(1,2), traj6{i}(1,3), traj6{i}(2,1), traj6{i}(2,2), traj6{i}(2,3), traj6{i}(3,1), traj6{i}(3,2), traj6{i}(3,3), traj6{i}(1,4), traj6{i}(2,4), traj6{i}(3,4), gripper_state];
+    end
 
-for i = 1:N
-    traj6_matrix(i,:) = [traj6{i}(1,1),traj6{i}(1,2), traj6{i}(1,3), traj6{i}(2,1), traj6{i}(2,2), traj6{i}(2,3), traj6{i}(3,1), traj6{i}(3,2), traj6{i}(3,3), traj6{i}(1,4), traj6{i}(2,4), traj6{i}(3,4), gripper_state];
-end
+    gripper_state = 0;
 
-gripper_state = 0;
+    traj7 = ScrewTrajectory(Tse_final, Tse_final, t, N, 5);
 
-traj7 = ScrewTrajectory(Tse_final, Tse_final, t, N, 5);
+    
 
-traj7_matrix = zeros(N,13);
+    for i = 1:N
+        traj7_matrix(i,:) = [traj7{i}(1,1),traj7{i}(1,2), traj7{i}(1,3), traj7{i}(2,1), traj7{i}(2,2), traj7{i}(2,3), traj7{i}(3,1), traj7{i}(3,2), traj7{i}(3,3), traj7{i}(1,4), traj7{i}(2,4), traj7{i}(3,4), gripper_state];
+    end
 
-for i = 1:N
-    traj7_matrix(i,:) = [traj7{i}(1,1),traj7{i}(1,2), traj7{i}(1,3), traj7{i}(2,1), traj7{i}(2,2), traj7{i}(2,3), traj7{i}(3,1), traj7{i}(3,2), traj7{i}(3,3), traj7{i}(1,4), traj7{i}(2,4), traj7{i}(3,4), gripper_state];
-end
+    traj8 = ScrewTrajectory(Tse_final, Tse_standoff_final, t, N, 5);
+    
+    
+    for i = 1:N
+        traj8_matrix(i,:) = [traj8{i}(1,1),traj8{i}(1,2), traj8{i}(1,3), traj8{i}(2,1), traj8{i}(2,2), traj8{i}(2,3), traj8{i}(3,1), traj8{i}(3,2), traj8{i}(3,3), traj8{i}(1,4), traj8{i}(2,4), traj8{i}(3,4), gripper_state];
+    end
 
-traj8 = ScrewTrajectory(Tse_final, Tse_standoff_final, t, N, 5);
-traj8_matrix = zeros(N,13);
-
-for i = 1:N
-    traj8_matrix(i,:) = [traj8{i}(1,1),traj8{i}(1,2), traj8{i}(1,3), traj8{i}(2,1), traj8{i}(2,2), traj8{i}(2,3), traj8{i}(3,1), traj8{i}(3,2), traj8{i}(3,3), traj8{i}(1,4), traj8{i}(2,4), traj8{i}(3,4), gripper_state];
-end
-
-traj = [traj1_matrix; traj2_matrix; traj3_matrix; traj4_matrix; traj5_matrix; traj6_matrix; traj7_matrix; traj8_matrix]
-
-% for i = 1:N
-% 
-% 
-% 
-% end
-% end
-
-% %% Some basic sanity checks (DO NOT EDIT THIS PART)
-% % size of waypoint_array check
-% if length(waypoint_array(1,:)) ~= 8
-%     error('waypoint_array should have 8 columns')
-% end
-% 
-% for i = 1:length(waypoint_array(:,1))
-%     for j = 1:5
-%         % Joint limit check (error if out of joint limit bounds)
-%         if waypoint_array(i,j) > 360 || waypoint_array(i,j) < -360
-%             error(['Error: joint ',num2str(j),' in waypoint number ',num2str(i),' is out of joint limit bounds']);
-%         end
-%         % Gripper state check (error if not 0 or 1)
-%         if waypoint_array(i,7) ~= 0 && waypoint_array(i,7) ~= 1
-%             error(['Error: gripper state in waypoint number ',num2str(i),' is invalid. It should be 0 or 1']);
-%         end
-%     end
-% end
-
-% %% Output array to waypoint_array.csv
-% % waypoint_array.csv will be located in Matlab's current directory
-% writematrix(waypoint_array,'waypoint_array.csv')
+    traj = [traj1_matrix; traj2_matrix; traj3_matrix; traj4_matrix; traj5_matrix; traj6_matrix; traj7_matrix; traj8_matrix];
 
 end

@@ -1,0 +1,31 @@
+clear; clc;
+
+Tse_initial = [0 0 1 0;
+               0 1 0 0;
+              -1 0 0 0.5;
+               0 0 0 1];
+
+Tsc_initial = [1 0 0 1;
+               0 1 0 0;
+               0 0 1 0.025;
+               0 0 0 1];
+
+Tsc_final = [0 1 0 0;
+            -1 0 0 -1;
+             0 0 1 0.025;
+             0 0 0 1];
+
+Tce_grasp = [-1 0 0 0;
+              0 1 0 0;
+              0 0 -1 0;
+              0 0 0 1];
+
+Tce_standoff = [-1 0 0 0;
+                 0 1 0 0;
+                 0 0 -1 0.1;
+                 0 0 0 1];
+
+
+traj = TrajectoryGenerator(Tse_initial, Tsc_initial, Tsc_final, Tce_grasp, Tce_standoff, 1);
+
+writematrix(traj,'trajectory_milestone1.csv')
