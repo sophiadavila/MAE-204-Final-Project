@@ -1,3 +1,4 @@
+%code to test NextState
 clear; clc
 
 current_state = [0 0 0 0 0 0 0 0 0 0 0 0];

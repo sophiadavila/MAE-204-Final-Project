@@ -1,9 +1,5 @@
+% Next State function
 function next_state = NextState(current_state, velocities, dt, max_speed)
-
-% current_state = [0 0.0048 0 0 0 0 0 0 0 0 0 0];
-% dt = 0.01;
-% max_speed = 20;
-% velocities = [0 0 0 0 0 10 10 10 10];
 
 for i = 1:9
     if velocities(i)> max_speed
