@@ -8,12 +8,12 @@ for i = 1:9
 end
 
 joint_angles = current_state(4:8);
-joint_speeds = velocities(1:5);
+joint_speeds = velocities(5:9);
 
 new_joint_angles = joint_angles + joint_speeds * dt;
 
 wheel_angles = current_state(9:12);
-wheel_speeds = velocities(6:9);
+wheel_speeds = velocities(1:4);
 
 d_wheel_angle = wheel_speeds * dt;
 
@@ -23,7 +23,7 @@ l = 0.47/2;
 w = 0.3/2;
 r = 0.0475;
 
-chassis_twist = (r/4).*[-1/(l+w), 1/(l+w), 1/(l+w), -1/(l+w); 1, 1, 1, 1; -1, 1, -1, 1]*d_wheel_angle';
+chassis_twist = (r/4).*[-1/(l+w), 1/(l+w), 1/(l+w), -1/(l+w); 1, 1, 1, 1; -1, 1, -1, 1]*d_wheel_angle;
 
 q_0 = current_state(1:3);
 
