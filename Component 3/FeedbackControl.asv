@@ -1,4 +1,4 @@
-function  [twist, speeds, Xe, Xe_int] = FeedbackControl(X, Xd, Xd_next, Kp, Ki, dt, Xe_int, current_state)
+function  [twist, speeds, Xe] = FeedbackControl(X, Xd, Xd_next, Kp, Ki, dt, Xe_int, current_state)
 
 M0e = [1 0 0 0.033;...
        0 1 0 0;...
@@ -15,7 +15,7 @@ thetalist = current_state(4:8);
 
 Jarm = JacobianBody(Blist, thetalist);
 
-T0e = FKinBody(M0e,Blist,thetalist');
+T0e = FKinBody(M0e,Blist,thetalist);
 
 Tb0 = [1 0 0 0.1662;...
        0 1 0 0;...
@@ -26,10 +26,10 @@ l = 0.47/2;
 w = 0.3/2;
 r = 0.0475;
 
-% Tbe = Tb0*T0e;
-% Teb = TransInv(Tbe);
-% 
-% Ad_Teb = Adjoint(Teb);
+Tbe = Tb0*T0e;
+Teb = inv(Tbe);
+
+Ad_Teb = Adjoint(Teb);
 
 % H = 1/r*[-l-w 1 -1;...
 %          l+w 1 1;...
@@ -48,35 +48,30 @@ F6 = [ zeros(2,4);
 % size(Ad_Teb)
 % size(F6)
 
-Jbase = Adjoint(TransInv(T0e)*TransInv(Tb0))*F6;
-%Jbase = Ad_Teb * F6;
+Jbase = Ad_Teb * F6;
 
 Je = [Jbase Jarm];
 
 %% calculating the outputs
 
-% twist_d = (1/dt)*MatrixLog6(TransInv(Xd)*Xd_next);
-% 
-% twist_d = se3ToVec(twist_d);
+twist_d = (1/dt)*MatrixLog6(inv(Xd)*Xd_next);
 
-twist_d = se3ToVec((1/dt)*MatrixLog6(TransInv(Xd)*Xd_next));
+twist_d = se3ToVec(twist_d);
 
-% Xe = MatrixLog6(TransInv(X)*Xd);
-% 
-% Xe = se3ToVec(Xe);
+Xe = MatrixLog6(inv(X)*Xd);
 
-Xe = se3ToVec(MatrixLog6(TransInv(X)*Xd));
+Xe = se3ToVec(Xe);
 
-Ad = Adjoint(TransInv(X)*Xd);
+Ad = Adjoint(inv(X)*Xd);
 
-Xe_int = Xe_int + Xe*dt;
+Xe_int = Xe_int 
 
-integral = Ki * (Xe_int);
-
+integral = Ki * dt * (Xe_int + Xe);
+Ki * (Xe_int);
 proportional = Kp * Xe;
 
-twist = Adjoint(TransInv(X)*Xd)*twist_d + proportional + integral;
+twist = Ad*twist_d + proportional + integral;
 
-speeds = pinv(Je,1e-3) * twist;
+speeds = pinv(Je) * twist;
 
 end

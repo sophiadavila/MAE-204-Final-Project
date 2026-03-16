@@ -2,7 +2,6 @@
 function traj = TrajectoryGenerator(Tse_initial, Tsc_initial, Tsc_final, Tce_grasp, Tce_standoff, k)
 
     t = 1;
-    k = 1;
     N = t*k/(0.01);
 
     % move 1

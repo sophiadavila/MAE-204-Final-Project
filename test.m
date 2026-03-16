@@ -41,9 +41,12 @@ Blist = [0 0 1 0 0.033 0;...
          0 -1 0 -0.2176 0 0; ...
          0 0 1 0 0 0]';
 
-Kp = 25*diag([2,2,2,2,2,2]);
+Kp = 0*eye(6);
+Ki = 0*eye(6);
 
-Ki = 2*diag([1,1,1,1,1,1]);
+% Kp = 25*diag([2,2,2,2,2,2]);
+% 
+% Ki = 100*diag([1,1,1,1,1,1]);
 
 dt = 0.01;
 
@@ -78,12 +81,12 @@ for i = 1:N-1
           0 0 0 1];
 
     Xd_next = [traj(i+1,1), traj(i+1,2), traj(i+1,3), traj(i+1,10);
-          traj(i+1,4), traj(i+1,5), traj(i+1,6), traj(i+1,11);
-          traj(i+1,7), traj(i+1,8), traj(i+1,9), traj(i+1,12);
-          0 0 0 1];
+               traj(i+1,4), traj(i+1,5), traj(i+1,6), traj(i+1,11);
+               traj(i+1,7), traj(i+1,8), traj(i+1,9), traj(i+1,12);
+               0 0 0 1];
 
     
-    [twist, speeds, Xe] = FeedbackControl(X, Xd, Xd_next, Kp, Ki, dt, current_state);
+    [twist, speeds, Xe] = FeedbackControl2(X, Xd, Xd_next, Kp, Ki, dt, thetalist);
 
     next_state = NextState(current_state, speeds, dt, max_speed);
 
@@ -94,25 +97,32 @@ for i = 1:N-1
 end
 
 t = (0:N-1)*dt;
-figure(1);
+
+figure(1)
 
 plot(t, error_matrix(:,1), 'LineWidth',1.5)
 hold on
 plot(t, error_matrix(:,2), 'LineWidth',1.5)
 plot(t, error_matrix(:,3), 'LineWidth',1.5)
+xlabel('Time (s)')
+ylabel('Error')
+title('End-Effector Error vs Time')
+legend('\omega_x','\omega_y','\omega_z')
+
+figure(2)
 plot(t, error_matrix(:,4), 'LineWidth',1.5)
+hold on
 plot(t, error_matrix(:,5), 'LineWidth',1.5)
 plot(t, error_matrix(:,6), 'LineWidth',1.5)
 
 xlabel('Time (s)')
 ylabel('Error')
 title('End-Effector Error vs Time')
-
-legend('\omega_x','\omega_y','\omega_z','v_x','v_y','v_z')
+legend('v_x','v_y','v_z')
 
 grid on
 
-figure(2);
+figure(3);
 plot(configuration_matrix)
 
-writematrix(configuration_matrix,'full_code.csv')
+writematrix(configuration_matrix,'full_code2.csv')

@@ -51,9 +51,10 @@
 Xd = [0 0 1 0.5; 0 1 0 0; -1 0 0 0.5; 0 0 0 1];
 Xd_next = [0 0 1 0.6; 0 1 0 0; -1 0 0 0.3; 0 0 0 1];
 X = [0.17 0 0.985 0.387; 0 1 0 0; -0.985 0 0.170 0.570; 0 0 0 1];
-Kp = eye(6);
+Kp = zeros(6);
 Ki = zeros(6);
 dt = 0.01;
 current_position = [0 0 0 0 0 0.2 -1.6 0];
+Xe_int = 0;
 
-[twist, speeds, Xe] = FeedbackControl(X, Xd, Xd_next, Kp, Ki, dt, current_position);
+[twist, speeds, Xe, X_int] = FeedbackControl(X, Xd, Xd_next, Kp, Ki, dt, Xe_int, current_position);
