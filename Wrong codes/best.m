@@ -106,7 +106,7 @@ for i = 1:N-1
 
     
     %running feedback control
-    [twist, speeds, Xe, Xe_int, Je] = FeedbackControl(X, Xd, Xd_next, Kp, Ki, dt, Xe_int, current_state);
+    [twist, speeds, Xe, Xe_int, Je] = FeedbackControl_Jintian(X, Xd, Xd_next, Kp, Ki, dt, Xe_int, current_state);
     
     %getting the next state
     next_state = NextState(current_state, speeds, dt, max_speed);
