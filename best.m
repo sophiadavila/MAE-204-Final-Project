@@ -51,8 +51,8 @@ Blist = [0 0 1 0 0.033 0;...
 dt = 0.01;
 max_speed = 1000;
 
-%current_state = [0 1 0 0 0 0 0 0 0 0 0 0]; %different initial state tests 
-current_state = [pi/4 0.3 0.3 0 0 0 0 0 0 0 0 0]; %current state with at least 30 degree orientation error and 0.2m position error
+current_state = [0 0 0 0 0 0 -pi/4 0 0 0 0 0]; %different initial state tests 
+%current_state = [pi/4 0.3 0.3 0 0 0 0 0 0 0 0 0]; %current state with at least 30 degree orientation error and 0.2m position error
 %current_state = [pi/3 0.5 -0.3 0.2 -0.5 0.3 0 0 0 0 0 0]; %different initial state tests 
 
 N = length(traj);
@@ -123,8 +123,8 @@ for i = 1:N-1
     egn_w = eig(Jw*Jw');
     egn_v = eig(Jv*Jv');
 
-    mu_w(i) = sqrt(abs(min(egn_w)))/sqrt(abs(max(egn_w)));
-    mu_v(i) = sqrt(abs(min(egn_v)))/sqrt(abs(max(egn_v)));
+    mu_w(i) = sqrt(abs(max(egn_w)))/sqrt(abs(min(egn_w)));
+    mu_v(i) = sqrt(abs(max(egn_v)))/sqrt(abs(min(egn_v)));
 
     %storing the configuration of each step
     configuration_matrix(i, :) = [current_state traj(i,end)];
@@ -163,7 +163,8 @@ grid on
 % plotting manipulability factors
 figure(3);
 plot(t, mu_w, 'LineWidth',1.5)
-hold on
+
+figure(4);
 plot(t, mu_v, 'LineWidth',1.5)
 
 xlabel('Time (s)')

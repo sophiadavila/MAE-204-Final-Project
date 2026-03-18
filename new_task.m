@@ -181,7 +181,8 @@ grid on
 % plotting manipulability factors
 figure(3);
 plot(t, mu_w, 'LineWidth',1.5)
-hold on
+
+figure(4)
 plot(t, mu_v, 'LineWidth',1.5)
 
 xlabel('Time (s)')

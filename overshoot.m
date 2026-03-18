@@ -74,14 +74,14 @@ mu_v = zeros(N-1,1);
 configuration_matrix = zeros(N-1,13);
 
 %% Controller parameters 
-Kp = 7*eye(6);
-Ki = 4*eye(6);
+Kp = 21*eye(6);
+Ki = 0*eye(6);
 
-% % theta_min = [-2*pi; -pi/4; -2*pi; -(pi-pi/8); -2*pi];
-% % theta_max = [ 2*pi;  (pi/2)+(pi/4);  2*pi;  pi-pi/8;  2*pi];
+% theta_min = [-2*pi; -pi/4; -2*pi; -(pi-pi/8); -2*pi];
+% theta_max = [ 2*pi;  (pi/2)+(pi/4);  2*pi;  pi-pi/8;  2*pi];
 % 
-% theta_min = [pi/2; -pi/2; -(pi/2); 2*pi; -2*pi];
-% theta_max = [ -pi/2;  pi/2;  (pi/2);  2*pi;  2*pi];
+% theta_min = [pi/2; -pi/2; -(pi); 2*pi; -2*pi];
+% theta_max = [ -pi/2;  pi/2;  (pi);  2*pi;  2*pi];
 
 
 %% for loop iterating through steps of the generated trajectory
@@ -124,7 +124,7 @@ for i = 1:N-1
     % theta = next_state(4:8)';
     % theta = min(max(theta, theta_min), theta_max);
     % next_state(4:8) = theta';
-    
+    % 
     %storing the error 
     error_matrix(i, :) = Xe';
     rot_error(i,:) = Xe(1:3);%/max(Xe(1:3));
