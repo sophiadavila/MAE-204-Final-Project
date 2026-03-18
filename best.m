@@ -74,7 +74,7 @@ configuration_matrix = zeros(N-1,13);
 
 %% Controller parameters 
 Kp = 1*eye(6);
-Ki = 0.01*eye(6);
+Ki = 0*eye(6);
 
 %% for loop iterating through steps of the generated trajectory
 for i = 1:N-1

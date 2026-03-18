@@ -7,13 +7,13 @@ Tse_initial = [0 0 1 0;
               -1 0 0 0.5;
                0 0 0 1];
 
-Tsc_initial = [1 0 0 1; 
-               0 1 0 0;
+Tsc_initial = [1 0 0 0.400;
+               0 1 0 0.000;
                0 0 1 0.025;
                0 0 0 1];
 
-Tsc_final = [0 1 0 0;
-            -1 0 0 -1;
+Tsc_final = [1 0 0 0.072;
+             0 1 0 -0.347;
              0 0 1 0.025;
              0 0 0 1];
 
@@ -27,8 +27,19 @@ Tce_standoff = [-1 0 0 0;
                  0 0 -1 0.1;
                  0 0 0 1];
 
+% adding a "safe" position to try to avoid the behaviour of picking up a
+% block under the chassis
+Tse_safe1 = [0 0 1 0.3;
+            0 1 0 0;
+           -1 0 0 0.6;
+            0 0 0 1];
+
+Tse_safe2 = [0 0 1 -0.3;
+            0 1 0 -0.6;
+           -1 0 0 0.6;
+            0 0 0 1];
 %% Generating the trajectory
-traj = TrajectoryGenerator(Tse_initial, Tsc_initial, Tsc_final, Tce_grasp, Tce_standoff, 1);
+traj = TrajectoryGeneratorNewTask(Tse_initial, Tsc_initial, Tsc_final, Tce_grasp, Tce_standoff, Tse_safe1, Tse_safe2, 1);
 
 %% Important matrices for later calculations (given in the CoppeliaSim website - scene 6)
 Tb0 = [1 0 0 0.1662;...
@@ -73,8 +84,12 @@ mu_v = zeros(N-1,1);
 configuration_matrix = zeros(N-1,13);
 
 %% Controller parameters 
-Kp = 1*eye(6);
-Ki = 1*eye(6);
+Kp = 2*eye(6);
+Ki = 0*eye(6);
+
+%% joint limits added for new task (this is an attempt to fix the behaviour of "trying to pick up a block under the chassis"
+theta_min = [2*pi; -pi/4; 0; -(pi-pi/8); -2*pi];
+theta_max = [ 2*pi;  (pi/2)+(pi/4);  pi;  pi-pi/8;  2*pi];
 
 %% for loop iterating through steps of the generated trajectory
 for i = 1:N-1
@@ -110,6 +125,11 @@ for i = 1:N-1
     
     %getting the next state
     next_state = NextState(current_state, speeds, dt, max_speed);
+
+    % implementing joint limits
+    theta = next_state(4:8)';
+    theta = min(max(theta, theta_min), theta_max);
+    next_state(4:8) = theta';
     
     %storing the error 
     error_matrix(i, :) = Xe';
@@ -172,4 +192,4 @@ grid on
 % figure(4);
 % plot(configuration_matrix)
 
-writematrix(configuration_matrix,'overshoot.csv') %saving configuration into a csv file
+writematrix(configuration_matrix,'new_task.csv') %saving configuration into a csv file
