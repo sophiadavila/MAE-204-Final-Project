@@ -73,7 +73,7 @@ mu_v = zeros(N-1,1);
 configuration_matrix = zeros(N-1,13);
 
 %% Controller parameters 
-Kp = 20*eye(6);
+Kp = 1*eye(6);
 Ki = 0.01*eye(6);
 
 %% for loop iterating through steps of the generated trajectory
