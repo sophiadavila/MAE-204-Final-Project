@@ -51,9 +51,9 @@ Blist = [0 0 1 0 0.033 0;...
 dt = 0.01;
 max_speed = 1000;
 
-%current_state = [0 0 0 0 0 0 -pi/4 0 0 0 0 0]; %different initial state tests 
+current_state = [0 0 0 0 0 0 -pi/4 0 0 0 0 0]; %different initial state tests 
 %current_state = [pi/4 0.3 0.3 0 0 0 0 0 0 0 0 0]; %current state with at least 30 degree orientation error and 0.2m position error
-current_state = [-pi -0.3 -0.3 0 0 0 0 0 0 0 0 0]; %current state with at least 30 degree orientation error and 0.2m position error
+%current_state = [-pi -0.3 -0.3 0 0 0 0 0 0 0 0 0]; %current state with at least 30 degree orientation error and 0.2m position error
 %current_state = [pi/3 0.5 -0.3 0.2 -0.5 0.3 0 0 0 0 0 0]; %different initial state tests 
 
 N = length(traj);
@@ -74,7 +74,7 @@ mu_v = zeros(N-1,1);
 configuration_matrix = zeros(N-1,13);
 
 %% Controller parameters 
-Kp = 21*eye(6);
+Kp = 1.5*eye(6);
 Ki = 0*eye(6);
 
 % theta_min = [-2*pi; -pi/4; -2*pi; -(pi-pi/8); -2*pi];
@@ -82,6 +82,11 @@ Ki = 0*eye(6);
 % 
 % theta_min = [pi/2; -pi/2; -(pi); 2*pi; -2*pi];
 % theta_max = [ -pi/2;  pi/2;  (pi);  2*pi;  2*pi];
+
+theta_min = [-2.9; -1.5; -2.6; -1.8; -2.9];
+theta_max = [2.9; 1.5; 2.6; -0.2; 2.9];
+
+theta_limits = [theta_min, theta_max];
 
 
 %% for loop iterating through steps of the generated trajectory
@@ -121,10 +126,8 @@ for i = 1:N-1
     next_state = NextState(current_state, speeds, dt, max_speed);
 
     %  % implementing joint limits
-    % theta = next_state(4:8)';
-    % theta = min(max(theta, theta_min), theta_max);
-    % next_state(4:8) = theta';
-    % 
+    next_state(4:8) = joint_limits(next_state(4:8), theta_limits);
+    
     %storing the error 
     error_matrix(i, :) = Xe';
     rot_error(i,:) = Xe(1:3);%/max(Xe(1:3));
@@ -133,12 +136,12 @@ for i = 1:N-1
     %calculating and storing the manipulability factors
     Jw = Je(1:3,:);
     Jv = Je(4:6,:);
+    
+    Aw = Jw*Jw';
+    Av = Jv*Jv';
 
-    egn_w = eig(Jw*Jw');
-    egn_v = eig(Jv*Jv');
-
-    mu_w(i) = sqrt(abs(min(egn_w)))/sqrt(abs(max(egn_w)));
-    mu_v(i) = sqrt(abs(min(egn_v)))/sqrt(abs(max(egn_v)));
+    mu_w(i) = sqrt((max(eig(Aw))))/sqrt((min(eig(Aw))));
+    mu_v(i) = sqrt((max(eig(Av))))/sqrt((min(eig(Av))));
     
     %storing the configuration of each step
     configuration_matrix(i, :) = [current_state traj(i,end)];
@@ -150,7 +153,8 @@ end
 %plotting 
 t = (0:N-2)*dt; %time vector
 
-figure(1) %plotting rotational error (w)
+figure(1)
+subplot(3,1,1)
 plot(t, rot_error(:,1),'LineWidth',1.5)
 hold on
 plot(t, rot_error(:,2),'LineWidth',1.5)
@@ -162,7 +166,6 @@ title('End-Effector Error vs Time')
 legend('\omega_x','\omega_y', '\omega_z')
 grid on
 
-figure(2) %ploting translational error (v)
 plot(t, trans_error(:,1),'LineWidth',1.5)
 hold on
 plot(t, trans_error(:,2),'LineWidth',1.5)
@@ -174,10 +177,10 @@ title('End-Effector Error vs Time')
 legend('v_x','v_y', 'v_z')
 grid on
 
-% plotting manipulability factors
-figure(3);
+subplot(3,1,2)
 plot(t, mu_w, 'LineWidth',1.5)
-hold on
+
+subplot(3,1,3)
 plot(t, mu_v, 'LineWidth',1.5)
 
 xlabel('Time (s)')
