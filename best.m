@@ -159,9 +159,9 @@ grid on
 
 % plotting manipulability factors
 figure(3);
-plot(t, mu_w, 'LineWidth',1.5)
+plot(t, 1/mu_w, 'LineWidth',1.5)
 hold on
-plot(t, mu_v, 'LineWidth',1.5)
+plot(t, 1/mu_v, 'LineWidth',1.5)
 
 xlabel('Time (s)')
 ylabel('Manipulability')
