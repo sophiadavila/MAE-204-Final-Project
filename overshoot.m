@@ -52,7 +52,8 @@ dt = 0.01;
 max_speed = 1000;
 
 %current_state = [0 0 0 0 0 0 -pi/4 0 0 0 0 0]; %different initial state tests 
-current_state = [pi/4 0.3 0.3 0 0 0 0 0 0 0 0 0]; %current state with at least 30 degree orientation error and 0.2m position error
+%current_state = [pi/4 0.3 0.3 0 0 0 0 0 0 0 0 0]; %current state with at least 30 degree orientation error and 0.2m position error
+current_state = [-pi -0.3 -0.3 0 0 0 0 0 0 0 0 0]; %current state with at least 30 degree orientation error and 0.2m position error
 %current_state = [pi/3 0.5 -0.3 0.2 -0.5 0.3 0 0 0 0 0 0]; %different initial state tests 
 
 N = length(traj);
@@ -73,8 +74,15 @@ mu_v = zeros(N-1,1);
 configuration_matrix = zeros(N-1,13);
 
 %% Controller parameters 
-Kp = 1*eye(6);
-Ki = 1*eye(6);
+Kp = 7*eye(6);
+Ki = 4*eye(6);
+
+% % theta_min = [-2*pi; -pi/4; -2*pi; -(pi-pi/8); -2*pi];
+% % theta_max = [ 2*pi;  (pi/2)+(pi/4);  2*pi;  pi-pi/8;  2*pi];
+% 
+% theta_min = [pi/2; -pi/2; -(pi/2); 2*pi; -2*pi];
+% theta_max = [ -pi/2;  pi/2;  (pi/2);  2*pi;  2*pi];
+
 
 %% for loop iterating through steps of the generated trajectory
 for i = 1:N-1
@@ -108,8 +116,14 @@ for i = 1:N-1
     %running feedback control
     [twist, speeds, Xe, Xe_int, Je] = FeedbackControl(X, Xd, Xd_next, Kp, Ki, dt, Xe_int, current_state);
     
+    
     %getting the next state
     next_state = NextState(current_state, speeds, dt, max_speed);
+
+    %  % implementing joint limits
+    % theta = next_state(4:8)';
+    % theta = min(max(theta, theta_min), theta_max);
+    % next_state(4:8) = theta';
     
     %storing the error 
     error_matrix(i, :) = Xe';
@@ -120,9 +134,12 @@ for i = 1:N-1
     Jw = Je(1:3,:);
     Jv = Je(4:6,:);
 
-    mu_w(i) = sqrt(abs(det(Jw*Jw')));
-    mu_v(i) = sqrt(abs(det(Jv*Jv')));
+    egn_w = eig(Jw*Jw');
+    egn_v = eig(Jv*Jv');
 
+    mu_w(i) = sqrt(abs(min(egn_w)))/sqrt(abs(max(egn_w)));
+    mu_v(i) = sqrt(abs(min(egn_v)))/sqrt(abs(max(egn_v)));
+    
     %storing the configuration of each step
     configuration_matrix(i, :) = [current_state traj(i,end)];
 

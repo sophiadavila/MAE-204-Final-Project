@@ -72,6 +72,7 @@ F6 = [ zeros(2,4);
 Jbase = Adjoint(TransInv(T0e)*TransInv(Tb0))*F6; %Jacobian for chassis motion
 
 Je = [Jbase Jarm]; %combining both jacobians
+%Je(Je < 1e-3) = 1e-3;
 
 %% calculating the outputs
 

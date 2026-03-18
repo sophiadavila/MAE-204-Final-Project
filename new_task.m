@@ -1,7 +1,8 @@
 clear; clc; close all;
 
 %% Transformation matrices for our desired positions:
-% these can be changed to achieve different motion
+% these can be changed to achieve different motion (the matrices here are
+% the new task matrices)
 Tse_initial = [0 0 1 0;
                0 1 0 0;
               -1 0 0 0.5;

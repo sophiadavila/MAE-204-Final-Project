@@ -1,7 +1,8 @@
 clear; clc; close all;
 
 %% Transformation matrices for our desired positions:
-% these can be changed to achieve different motion
+% these can be changed to achieve different motion (the matrices here are
+% the new task matri
 Tse_initial = [0 0 1 0;
                0 1 0 0;
               -1 0 0 0.5;
@@ -84,12 +85,12 @@ mu_v = zeros(N-1,1);
 configuration_matrix = zeros(N-1,13);
 
 %% Controller parameters 
-Kp = 2*eye(6);
+Kp = 1*eye(6);
 Ki = 0*eye(6);
 
 %% joint limits added for new task (this is an attempt to fix the behaviour of "trying to pick up a block under the chassis"
-theta_min = [2*pi; -pi/4; 0; -(pi-pi/8); -2*pi];
-theta_max = [ 2*pi;  (pi/2)+(pi/4);  pi;  pi-pi/8;  2*pi];
+% theta_min = [-2*pi; -pi/4; -2*pi; -(pi-pi/8); -2*pi];
+% theta_max = [ 2*pi;  (pi/2)+(pi/4);  2*pi;  pi-pi/8;  2*pi];
 
 %% for loop iterating through steps of the generated trajectory
 for i = 1:N-1
@@ -127,9 +128,9 @@ for i = 1:N-1
     next_state = NextState(current_state, speeds, dt, max_speed);
 
     % implementing joint limits
-    theta = next_state(4:8)';
-    theta = min(max(theta, theta_min), theta_max);
-    next_state(4:8) = theta';
+    % theta = next_state(4:8)';
+    % theta = min(max(theta, theta_min), theta_max);
+    % next_state(4:8) = theta';
     
     %storing the error 
     error_matrix(i, :) = Xe';

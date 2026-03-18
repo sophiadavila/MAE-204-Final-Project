@@ -17,7 +17,7 @@ function traj = TrajectoryGenerator(Tse_initial, Tsc_initial, Tsc_final, Tce_gra
     % Moves 1 through 8 below correspond to each of the main desired poses
     % (or steps) to complete the task
 
-    t = 2; % duration of each move
+    t = 3; % duration of each move
     N = t*k/(0.01); %number of steps taken in each move
 
     % move 1
