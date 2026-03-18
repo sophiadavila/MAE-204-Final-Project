@@ -51,7 +51,9 @@ Blist = [0 0 1 0 0.033 0;...
 dt = 0.01;
 max_speed = 1000;
 
-current_state = [0 0 0 0 0 0 -pi/4 0 0 0 0 0]; %current state with at least 30 degree orientation error and 0.2m position error 
+%current_state = [0 0 0 0 0 0 -pi/4 0 0 0 0 0]; %different initial state tests 
+current_state = [pi/4 0.3 0.3 0 0 0 0 0 0 0 0 0]; %current state with at least 30 degree orientation error and 0.2m position error
+%current_state = [pi/3 0.5 -0.3 0.2 -0.5 0.3 0 0 0 0 0 0]; %different initial state tests 
 
 N = length(traj);
 
@@ -170,4 +172,4 @@ grid on
 % figure(4);
 % plot(configuration_matrix)
 
-writematrix(configuration_matrix,'full_code.csv') %saving configuration into a csv file
+writematrix(configuration_matrix,'overshoot.csv') %saving configuration into a csv file

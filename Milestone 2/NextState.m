@@ -4,11 +4,11 @@ function next_state = NextState(current_state, velocities, dt, max_speed)
 % Current state - horizontal
 % velocities - vertical
 
-% for i = 1:9
-%     if velocities(i)> max_speed
-%         velocities(i) = max_speed;
-%     end
-% end
+for i = 1:9
+    if velocities(i)> max_speed
+        velocities(i) = max_speed;
+    end
+end
 
 joint_angles = current_state(4:8); %horizontal
 joint_speeds = velocities(5:9); % vertical

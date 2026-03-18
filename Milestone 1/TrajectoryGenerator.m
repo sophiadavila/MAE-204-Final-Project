@@ -1,7 +1,10 @@
 % code for TrajectoryGenerator function
+% This function generates the reference (desired) trajectory for the end-effector frame {e}.
+% Inputs are 
+% Output is 
 function traj = TrajectoryGenerator(Tse_initial, Tsc_initial, Tsc_final, Tce_grasp, Tce_standoff, k)
 
-    t = 1;
+    t = 2;
     N = t*k/(0.01);
 
     % move 1
