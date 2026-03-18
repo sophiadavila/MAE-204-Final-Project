@@ -1,18 +1,33 @@
 % code for TrajectoryGenerator function
-% This function generates the reference (desired) trajectory for the end-effector frame {e}.
-% Inputs are 
-% Output is 
 function traj = TrajectoryGenerator(Tse_initial, Tsc_initial, Tsc_final, Tce_grasp, Tce_standoff, k)
+    % This function generates the reference (desired) trajectory for the end-effector frame {e}.
+    % Inputs are:
+    % Tse_initial - initial end effector configuration in {s}
+    % Tsc_initial - initial cube configuration in {s}
+    % Tsc_final - final (desired) cube configuration in {s}
+    % Tce_grasp - end effector configuration relative to cube when grasping
+    % Tce_standoff - end effector configuration relative to cube when in
+    % standoff (above grasp and drop position)
+    %
+    % Output is a trajectory matrix with N steps representing the entire
+    % trajectory of the end effector from initial to final positions. The
+    % matrix has size Nx13 with each row containing [R11 R12 R13 R21 R22
+    % R23 R31 R32 R33 px py pz gripper]
+    %
+    % Moves 1 through 8 below correspond to each of the main desired poses
+    % (or steps) to complete the task
 
-    t = 2;
-    N = t*k/(0.01);
+    t = 2; % duration of each move
+    N = t*k/(0.01); %number of steps taken in each move
 
     % move 1
-    Tse_standoff_initial = Tsc_initial*Tce_standoff;
-    traj1 = ScrewTrajectory(Tse_initial, Tse_standoff_initial, t, N, 5);
-    traj1_matrix = zeros(N,13);
-    gripper_state = 0;
-
+    Tse_standoff_initial = Tsc_initial*Tce_standoff; % calculating desired end effector configuration in {s}
+    traj1 = ScrewTrajectory(Tse_initial, Tse_standoff_initial, t, N, 5); % creating trajectory
+    traj1_matrix = zeros(N,13); %initializing trajectory matrix that will store all trajectory lines
+    gripper_state = 0; %defining gripper state
+    
+    % for loop used to rewrite the trajectory into the trajectory matrix to
+    % fit the required format
     for i = 1:N
         traj1_matrix(i,:) = [traj1{i}(1,1),traj1{i}(1,2), traj1{i}(1,3), traj1{i}(2,1), traj1{i}(2,2), traj1{i}(2,3), traj1{i}(3,1), traj1{i}(3,2), traj1{i}(3,3), traj1{i}(1,4), traj1{i}(2,4), traj1{i}(3,4), gripper_state];
     end
