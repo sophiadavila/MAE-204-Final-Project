@@ -120,8 +120,11 @@ for i = 1:N-1
     Jw = Je(1:3,:);
     Jv = Je(4:6,:);
 
-    mu_w(i) = sqrt(abs(det(Jw*Jw')));
-    mu_v(i) = sqrt(abs(det(Jv*Jv')));
+    egn_w = eig(Jw*Jw');
+    egn_v = eig(Jv*Jv');
+
+    mu_w(i) = sqrt(abs(max(egn_w)))/sqrt(abs(min(egn_w(egn_w>1e-6))));
+    mu_v(i) = sqrt(abs(min(egn_v(egn_v>1e-5))))/sqrt(abs(max(eig(Jv*Jv'))));
 
     %storing the configuration of each step
     configuration_matrix(i, :) = [current_state traj(i,end)];
@@ -159,9 +162,9 @@ grid on
 
 % plotting manipulability factors
 figure(3);
-plot(t, 1/mu_w, 'LineWidth',1.5)
+plot(t, mu_w, 'LineWidth',1.5)
 hold on
-plot(t, 1/mu_v, 'LineWidth',1.5)
+plot(t, mu_v, 'LineWidth',1.5)
 
 xlabel('Time (s)')
 ylabel('Manipulability')

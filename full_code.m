@@ -71,7 +71,7 @@ mu_v = zeros(N-1,1);
 configuration_matrix = zeros(N-1,13);
 
 %% Controller parameters 
-Kp = 7*eye(6);
+Kp = 1*eye(6);
 Ki = 0*eye(6);
 
 %% for loop iterating through steps of the generated trajectory
@@ -118,8 +118,8 @@ for i = 1:N-1
     Jw = Je(1:3,:);
     Jv = Je(4:6,:);
 
-    mu_w(i) = sqrt(abs(det(Jw*Jw')));
-    mu_v(i) = sqrt(abs(det(Jv*Jv')));
+    mu_w(i) = sqrt(abs(min(eig(Jw*Jw'))))/sqrt(abs(max(eig(Jw*Jw'))));
+    mu_v(i) = sqrt(abs(min(eig(Jv*Jv'))))/sqrt(abs(max(eig(Jv*Jv'))));
 
     %storing the configuration of each step
     configuration_matrix(i, :) = [current_state traj(i,end)];
