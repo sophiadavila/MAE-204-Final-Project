@@ -16,15 +16,27 @@ Tsc_final = [0 1 0 0;
              0 0 1 0.025;
              0 0 0 1];
 
-Tce_grasp = [-1 0 0 0;
-              0 1 0 0;
-              0 0 -1 0;
-              0 0 0 1];
+c = sqrt(2)/2;
 
-Tce_standoff = [-1 0 0 0;
+Tce_grasp = [-c   0   c   0;
+              0   1   0   0;
+             -c   0  -c   0;
+              0   0   0   1];
+
+% Tce_grasp = [-1 0 0 0;
+%               0 1 0 0;
+%               0 0 -1 0;
+%               0 0 0 1];
+
+Tce_standoff = [-c 0 c 0;
                  0 1 0 0;
-                 0 0 -1 0.1;
+                 -c 0 -c 0.1;
                  0 0 0 1];
+
+% Tce_standoff = [-1 0 0 0;
+%                  0 1 0 0;
+%                  0 0 -1 0.1;
+%                  0 0 0 1];
 
 %% Generating the trajectory
 traj = TrajectoryGenerator(Tse_initial, Tsc_initial, Tsc_final, Tce_grasp, Tce_standoff, 1);
@@ -50,19 +62,7 @@ Blist = [0 0 1 0 0.033 0;
 dt = 0.01;
 max_speed = 1000;
 
-% %% joint limit
-% jlim = [-2.9  2.9;
-%  -1.5  1.5;
-%  -2.6  2.6;
-%  -1.8 1.8;   % avoids singularity
-%  -2.9  2.9];
-
-%current_state = [0 0 0 0 0 -pi/2 -pi/4 0 0 0 0 0];
-%current_state = [pi/4 0.3 0.3 0 0 0 0 0 0 0 0 0];
-%current_state = [pi/3 0.5 -0.3 0.2 -0.5 0.3 0 0 0 0 0 0]; %different initial state tests 
-current_state = [-pi -0.3 -0.3 0 0 0 0 0 0 0 0 0]; %current state with at least 30 degree orientation error and 0.2m position error
-%current_state = [pi/2 0.2 0.2 0 0 0 0 0 0 0 0 0];
-
+current_state = [0 0.2 0.2 0 0 -pi/2 -pi/4 0 0 0 0 0]; %might not meet requirement
 
 N = length(traj);
 
@@ -79,8 +79,8 @@ mu_v = zeros(N-1,1);
 configuration_matrix = zeros(N-1,13);
 
 %% Controller parameters 
-Kp = 2*eye(6);
-Ki = 0.0*eye(6);
+Kp = 4*eye(6);
+Ki = 20*eye(6);
 
 %% Main loop
 for i = 1:N-1
@@ -109,10 +109,9 @@ for i = 1:N-1
                traj(i+1,7:9) traj(i+1,12);
                0 0 0 1];
 
-    [twist, speeds, Xe, Xe_int, Je] = FeedbackControl_Jintian(X, Xd, Xd_next, Kp, Ki, dt, Xe_int, current_state);
+    [twist, speeds, Xe, Xe_int, Je] = FeedbackControl(X, Xd, Xd_next, Kp, Ki, dt, Xe_int, current_state);
     
-    next_state = NextState_Jintian(current_state, speeds, dt, max_speed);
-    % next_state(4:8) = limit_joints(next_state(4:8),jlim);
+    next_state = NextState(current_state, speeds, dt, max_speed);
     
     error_matrix(i,:) = Xe';
     rot_error(i,:) = Xe(1:3);
@@ -171,4 +170,4 @@ grid on
 
 
 % Save configuration
-writematrix(configuration_matrix,'full_code.csv')
+writematrix(configuration_matrix,'full_code_overshoot.csv')

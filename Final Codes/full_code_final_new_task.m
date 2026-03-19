@@ -6,13 +6,13 @@ Tse_initial = [0 0 1 0;
               -1 0 0 0.5;
                0 0 0 1];
 
-Tsc_initial = [1 0 0 1; 
-               0 1 0 0;
+Tsc_initial = [1 0 0 0.500;
+               0 1 0 -2.000;
                0 0 1 0.025;
                0 0 0 1];
 
-Tsc_final = [0 1 0 0;
-            -1 0 0 -1;
+Tsc_final = [1 0 0 0.5;
+             0 1 0 -0.5;
              0 0 1 0.025;
              0 0 0 1];
 
@@ -62,14 +62,7 @@ Blist = [0 0 1 0 0.033 0;
 dt = 0.01;
 max_speed = 1000;
 
- % jlim = [-2.9  2.9;
- %  -1.5  1.5;
- %  -2.6  2.6;
- %  -1.8 -0.2;   % avoids singularity
- %  -2.9  2.9];
-
- current_state = [0 0 0 0 0 -pi/2 -pi/4 0 0 0 0 0]; %might not meet requirement
-%current_state = [pi/6 0.3 0.3 0 0 0 0 0 0 0 0 0];
+current_state = [0 0.2 0.2 0 0 -pi/2 -pi/4 0 0 0 0 0]; %might not meet requirement
 
 N = length(traj);
 
@@ -86,7 +79,7 @@ mu_v = zeros(N-1,1);
 configuration_matrix = zeros(N-1,13);
 
 %% Controller parameters 
-Kp = 1.5*eye(6);
+Kp = 20*eye(6);
 Ki = 0*eye(6);
 
 %% Main loop
@@ -119,7 +112,6 @@ for i = 1:N-1
     [twist, speeds, Xe, Xe_int, Je] = FeedbackControl(X, Xd, Xd_next, Kp, Ki, dt, Xe_int, current_state);
     
     next_state = NextState(current_state, speeds, dt, max_speed);
-    %next_state(4:8) = limit_joints(next_state(4:8),jlim);
     
     error_matrix(i,:) = Xe';
     rot_error(i,:) = Xe(1:3);
@@ -178,4 +170,4 @@ grid on
 
 
 % Save configuration
-writematrix(configuration_matrix,'full_code.csv')
+writematrix(configuration_matrix,'full_code_new_task.csv')
